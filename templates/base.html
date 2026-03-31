@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="logo">ForecastX</div>
+
+    <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/sarimax">Long Term</a></li>
+        <li><a href="/xgboost">Short Term</a></li>
+    </ul>
+
+    <div class="auth-buttons">
+        <a href="/login" class="btn">Login</a>
+        <a href="/register" class="btn">Sign Up</a>
+    </div>
+</nav>
+
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+
+<script src="/static/script.js"></script>
+
+</body>
+</html>

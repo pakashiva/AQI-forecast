@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="home">
+    <h1>Air Quality Forecasting</h1>
+    <p>Select your forecast type</p>
+
+    <div class="cards">
+
+        <div class="card">
+            <h2>Short Term Forecast</h2>
+            
+            <a href="/xgboost" class="btn">Go</a>
+        </div>
+
+        <div class="card">
+            <h2>Long Term Forecast</h2>
+        
+            <a href="/sarimax" class="btn">Go</a>
+        </div>
+
+    </div>
+</div>
+
+  <div class="note">
+    ⚠️ Note: These models are trained on data from <strong>2023-04-01</strong> to <strong>2025-03-31</strong>. 
+    Predictions are based on this data.
+</div>
+
+{% endblock %}

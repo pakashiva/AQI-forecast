@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Short Term Forecast</h2>
+
+<form id="xgb-form">
+
+    <label>Select City</label>
+    <select id="city">
+        <option value="bangalore">Bangalore</option>
+        <option value="delhi">Delhi</option>
+        <option value="mumbai">Mumbai</option>
+    </select>
+
+    <label>Forecast Days (2-15)</label>
+    <input type="number" id="days" min="1" max="15" required>
+
+    <button type="submit">Forecast</button>
+
+</form>
+
+<canvas id="xgbChart" style="display: none;"></canvas>
+
+<script>
+document.getElementById("xgb-form").addEventListener("submit", async function(e){
+    e.preventDefault();
+
+    const city = document.getElementById("city").value;
+    const days = document.getElementById("days").value;
+
+    const response = await fetch("/predict_xgb", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({city, days})
+    });
+
+    const data = await response.json();
+
+    plotChart("xgbChart", data);
+});
+</script>
+
+{% endblock %}

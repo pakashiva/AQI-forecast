@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Long Term Forecast</h2>
+
+<form id="sarimax-form">
+
+    <label>Select City</label>
+    <select id="city">
+        <option value="bangalore">Bangalore</option>
+        <option value="delhi">Delhi</option>
+        <option value="mumbai">Mumbai</option>
+    </select>
+
+    <label>Forecast Years</label>
+    <input type="number" id="years" min="1" max="5" required>
+
+    <button type="submit">Forecast</button>
+
+</form>
+
+<canvas id="sarimaxChart" style="display: none;"></canvas>
+
+<script>
+document.getElementById("sarimax-form").addEventListener("submit", async function(e){
+    e.preventDefault();
+    
+    const city = document.getElementById("city").value;
+    const years = document.getElementById("years").value;
+
+    const response = await fetch("/predict_sarimax", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({city, years})
+    });
+
+    const data = await response.json();
+
+    plotChart("sarimaxChart" , data);
+});
+
+
+</script>
+
+{% endblock %}
