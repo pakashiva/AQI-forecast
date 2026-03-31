@@ -1,8 +1,8 @@
 from statsmodels.tsa.deterministic import CalendarFourier, DeterministicProcess
 import pandas as pd
-# =========================
-# 🔧 FEATURE CREATION
-# =========================
+
+# feature creation for sarimax
+
 def create_future_exog(index, steps):
     fourier = CalendarFourier(freq='YE', order=6)
 
