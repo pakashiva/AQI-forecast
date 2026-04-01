@@ -1,16 +1,33 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify , redirect , url_for
+from werkzeug.security import generate_password_hash , check_password_hash
 from utils import create_future_exog , forecast_future
 import pickle
 import numpy as np
 import xgboost as xgb
+from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
 
 
+# Database Handling
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db_sql = SQLAlchemy(app)
+
+# schema creation
+
+class Users(db_sql.Model):
+    id = db_sql.Column(db_sql.Integer , primary_key = True , nullable = False)
+    username = db_sql.Column(db_sql.String(200) , nullable = False , unique = True)
+    email = db_sql.Column(db_sql.String(150) , nullable = False)
+    password = db_sql.Column(db_sql.String(150) , nullable = False)
+
+
+
+
 # LOAD MODEL
-
-
 xgb_model = xgb.XGBRegressor()
 xgb_model.load_model("models/delhi/xgb_model.json")
 
@@ -42,13 +59,55 @@ def sarimax():
 def xgb():
     return render_template('xgboost.html')
 
-@app.route('/login')
-def login():
-    return render_template('login.html')
-
-@app.route('/register')
+@app.route('/register' ,methods = ['GET' , 'POST'])
 def register():
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        hashed_password = generate_password_hash(password)
+
+        if not email or '@' not in email:
+            return "Invalid Email, try again"
+
+        existing_user  = Users.query.filter_by(username = username).first()
+        existing_email = Users.query.filter_by(email = email).first()
+
+        if existing_user:
+            return 'Username Already exists, try another'
+        
+        if existing_email:
+            return 'This email Already exists, try another'
+        
+        new_user = Users(username = username , email = email , password = hashed_password)
+        db_sql.session.add(new_user)
+        db_sql.session.commit()
+
+        return redirect(url_for('login'))
+        
     return render_template('register.html')
+
+@app.route('/login' , methods = ['GET' , 'POST'])
+def login():
+
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        user = Users.query.filter_by(email = email).first()
+
+        if not email or '@' not in email:
+            return "Invalid email or email doesn't exists"
+
+        if user and check_password_hash(user.password , password):
+            return redirect(url_for('index'))
+        else:
+            return "Invalid credentials"
+        
+        
+
+    return render_template('login.html')
 
 # SARIMAX API
 

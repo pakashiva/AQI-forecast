@@ -4,9 +4,9 @@
 <div class="auth-container">
     <h2>Login</h2>
 
-    <form>
-        <input type="email" placeholder="Email">
-        <input type="password" placeholder="Password">
+    <form method="POST" , action="{{ url_for('login') }}">
+        <input type="email" placeholder="Email" , name="email">
+        <input type="password" placeholder="Password" , name="password">
         <button type="submit">Login</button>
     </form>
 
