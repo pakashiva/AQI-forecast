@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify , redirect , url_for ,session
+from flask import Flask, render_template, request, jsonify , redirect , url_for ,session , flash
 from functools import wraps
 from werkzeug.security import generate_password_hash , check_password_hash
 from utils import create_future_exog , forecast_future
@@ -32,6 +32,7 @@ def login_required(f):
     @wraps(f)
     def wrapper(*args , **kwargs):
         if 'user_id' not in session:
+            flash('Please Login before procceding.' , "error")
             return redirect(url_for('login'))
         return f(*args , **kwargs)
     return wrapper
@@ -81,16 +82,19 @@ def register():
         hashed_password = generate_password_hash(password)
 
         if not email or '@' not in email:
-            return "Invalid Email, try again"
+            flash("Invalid Email" , "error")
+            return redirect(url_for('register'))
 
         existing_user  = Users.query.filter_by(username = username).first()
         existing_email = Users.query.filter_by(email = email).first()
 
         if existing_user:
-            return 'Username Already exists, try another'
+            flash("Username Already exists,try another")
+            return redirect(url_for('register'))
         
         if existing_email:
-            return 'This email Already exists, try another'
+            flash("Email Already exists,try another")
+            return redirect(url_for('register'))
         
         new_user = Users(username = username , email = email , password = hashed_password)
         db_sql.session.add(new_user)
@@ -110,13 +114,16 @@ def login():
         user = Users.query.filter_by(email = email).first()
 
         if not email or '@' not in email:
-            return "Invalid email or email doesn't exists"
+            flash("Invalid email or email doesn't exists." , "error")
+            return redirect(url_for('login'))
 
         if user and check_password_hash(user.password , password):
             session['user_id'] = user.id
+            flash("Login Successful" , "success")
             return redirect(url_for('index'))
         else:
-            return "Invalid credentials"
+            flash("Invalid credentials, Please try again." , "error")
+            return redirect(url_for('login'))
 
     return render_template('login.html')
 
@@ -183,6 +190,7 @@ def predict_xgb():
 @login_required
 def logout():
     session.pop("user_id", None)
+    flash("logout successful" , "success")
     return redirect(url_for('login'))
 
 

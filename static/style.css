@@ -46,6 +46,7 @@ body {
 
 .container {
     padding: 40px;
+    text-align: center;
 }
 
 .home {
@@ -103,4 +104,26 @@ canvas {
     color: #e2e8f0;
 
     text-align: center;       
+}
+
+.flash {
+  padding: 10px;
+  margin: 10px;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+a {
+  color: blue;
+  text-decoration: none;
 }

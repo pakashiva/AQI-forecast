@@ -16,7 +16,8 @@ function plotChart(canvasId, data) {
         {
             label: "Forecast",
             data: data.values,
-            borderWidth: 2,
+            borderWidth: 3,
+            borderColor: "rgba(32, 31, 27, 0.57)",
             tension: 0.3
         }
     ];
@@ -27,12 +28,18 @@ function plotChart(canvasId, data) {
             {
                 label: "Upper Bound",
                 data: data.upper,
-                borderDash: [5, 5]
+                borderColor: "rgba(74, 74, 157, 0.82)",
+                borderDash: [5, 5],
+                fill: false
+
             },
             {
                 label: "Lower Bound",
                 data: data.lower,
-                borderDash: [5, 5]
+                borderColor: "rgba(74, 74, 157, 0.82)",
+                borderDash: [5, 5],
+                fill: '-1', // fill to previous dataset (Upper Bound)
+                backgroundColor: "rgba(255, 166, 0, 0.2)" // alpha = 0.3
             }
         );
     }
