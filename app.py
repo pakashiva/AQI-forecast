@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, jsonify , redirect , url_for
+from flask import Flask, render_template, request, jsonify , redirect , url_for ,session
+from functools import wraps
 from werkzeug.security import generate_password_hash , check_password_hash
 from utils import create_future_exog , forecast_future
 import pickle
@@ -24,7 +25,16 @@ class Users(db_sql.Model):
     email = db_sql.Column(db_sql.String(150) , nullable = False)
     password = db_sql.Column(db_sql.String(150) , nullable = False)
 
+# session handling
+app.config['SECRET_KEY'] = 'secrete_key'
 
+def login_required(f):
+    @wraps(f)
+    def wrapper(*args , **kwargs):
+        if 'user_id' not in session:
+            return redirect(url_for('login'))
+        return f(*args , **kwargs)
+    return wrapper
 
 
 # LOAD MODEL
@@ -52,11 +62,13 @@ def index():
     return render_template('home.html')
 
 @app.route('/sarimax')
+@login_required
 def sarimax():
     return render_template('sarimax.html')
 
 @app.route('/xgboost')
-def xgb():
+@login_required
+def xgboost():
     return render_template('xgboost.html')
 
 @app.route('/register' ,methods = ['GET' , 'POST'])
@@ -101,17 +113,17 @@ def login():
             return "Invalid email or email doesn't exists"
 
         if user and check_password_hash(user.password , password):
+            session['user_id'] = user.id
             return redirect(url_for('index'))
         else:
             return "Invalid credentials"
-        
-        
 
     return render_template('login.html')
 
 # SARIMAX API
 
 @app.route('/predict_sarimax', methods=["POST"])
+@login_required
 def predict_sarimax():
 
     data = request.json
@@ -154,6 +166,7 @@ def predict_sarimax():
     })
 
 @app.route('/predict_xgb' , methods = ['POST'])
+@login_required
 def predict_xgb():
     data = request.json
 
@@ -166,6 +179,19 @@ def predict_xgb():
         "values" : vals.iloc[:,1].to_list()
     })
 
+@app.route('/logout')
+@login_required
+def logout():
+    session.pop("user_id", None)
+    return redirect(url_for('login'))
+
+
+@app.context_processor
+def inject_user():
+    if 'user_id' in session:
+        user = Users.query.get(session['user_id'])
+        return dict(current_user = user)
+    return dict(current_user = None)
     
 if __name__ == '__main__':
     app.run(debug=True)

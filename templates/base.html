@@ -20,8 +20,13 @@
     </ul>
 
     <div class="auth-buttons">
+        {% if current_user %}
+            <span>Hi, {{ current_user.username }}</span>
+            <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+        {% else %}
         <a href="/login" class="btn">Login</a>
         <a href="/register" class="btn">Sign Up</a>
+        {% endif %}
     </div>
 </nav>
 
