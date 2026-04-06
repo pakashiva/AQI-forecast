@@ -17,8 +17,11 @@ load_dotenv()
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DATABASE_URL')
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-print("URL directed to:" , app.config["SQLALCHEMY_DATABASE_URI"])
-
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "pool_pre_ping": True,
+    "pool_recycle": 300,
+    "connect_args": {"sslmode": "require"}
+}
 db_sql = SQLAlchemy(app)
 
 # schema creation
@@ -27,7 +30,7 @@ class Users(db_sql.Model):
     id = db_sql.Column(db_sql.Integer , primary_key = True , nullable = False)
     username = db_sql.Column(db_sql.String(200) , nullable = False , unique = True)
     email = db_sql.Column(db_sql.String(150) , nullable = False)
-    password = db_sql.Column(db_sql.String(150) , nullable = False)
+    password = db_sql.Column(db_sql.Text , nullable = False)
 
 # session handling
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
@@ -208,4 +211,4 @@ def inject_user():
 host = os.environ.get('FLASK_RUN_HOST')
 
 if __name__ == '__main__':
-    app.run(host=host , port=3000 ,debug=True)
+    app.run(host=host , port=3000 ,debug=False)
