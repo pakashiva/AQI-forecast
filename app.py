@@ -6,14 +6,18 @@ import pickle
 import numpy as np
 import xgboost as xgb
 from flask_sqlalchemy import SQLAlchemy
+import os
+from dotenv import load_dotenv
 
 
 app = Flask(__name__)
 
-
+load_dotenv()
 # Database Handling
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DATABASE_URL')
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+print("URL directed to:" , app.config["SQLALCHEMY_DATABASE_URI"])
 
 db_sql = SQLAlchemy(app)
 
@@ -26,7 +30,7 @@ class Users(db_sql.Model):
     password = db_sql.Column(db_sql.String(150) , nullable = False)
 
 # session handling
-app.config['SECRET_KEY'] = 'secrete_key'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 def login_required(f):
     @wraps(f)
@@ -201,5 +205,7 @@ def inject_user():
         return dict(current_user = user)
     return dict(current_user = None)
     
+host = os.environ.get('FLASK_RUN_HOST')
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host=host , port=3000 ,debug=True)

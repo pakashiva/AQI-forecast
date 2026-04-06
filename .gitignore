@@ -1,0 +1,11 @@
+# env variables
+.env
+
+#databasse
+instance/
+
+#virtual environment
+env/
+
+#cache
+__pycache__/
