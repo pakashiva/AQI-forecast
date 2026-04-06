@@ -16,3 +16,4 @@ RUN chmod -R 777 /aqi-app/instance/
 
 CMD ["python" , "app.py"]
 
+    
