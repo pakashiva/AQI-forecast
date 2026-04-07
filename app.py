@@ -211,4 +211,4 @@ def inject_user():
 host = os.environ.get('FLASK_RUN_HOST')
 
 if __name__ == '__main__':
-    app.run(host=host , port=3000 ,debug=False)
+    app.run(host=host , port=int(os.environ.get("PORT", 10000)))
