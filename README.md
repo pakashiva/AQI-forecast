@@ -8,7 +8,7 @@ A production-ready Air Quality Index (AQI) forecasting application built with ma
 
 This project predicts air quality levels using historical pollution data and machine learning models. It is designed with a **production-grade architecture**, including containerization and scalable deployment.
 
-Air Quality Index (AQI) forecasting helps monitor pollution levels and enables proactive decision-making for health and environmental safety. ()
+Air Quality Index (AQI) forecasting helps monitor pollution levels and enables proactive decision-making for health and environmental safety.
 
 ---
 
